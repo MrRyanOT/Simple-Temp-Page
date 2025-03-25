@@ -13,7 +13,7 @@ if ($conn->connect_error) {
 $sql = "SELECT * FROM cpu_temperature ORDER BY timestamp DESC LIMIT 10";
 $result = $conn->query($sql);
 
-$chart_sql = "SELECT temperature, timestamp FROM cpu_temperature ORDER BY timestamp ASC";
+$chart_sql = "SELECT temperature, timestamp FROM cpu_temperature ORDER BY timestamp DESC LIMIT 10";
 $chart_result = $conn->query($chart_sql);
 
 $temp_data = [];
@@ -41,7 +41,6 @@ $conn->close();
         table { margin-top: 20px; }
         .card { background-color: #1e1e1e; border: none; }
         .table-dark { background-color: #232323; }
-        h4 { color:rgb(255, 255, 255); }
     </style>
 </head>
 <body>
@@ -79,6 +78,10 @@ $conn->close();
 </div>
 
 <script>
+    // Debug: Check if data is coming correctly from PHP
+    console.log("PHP Data for Temperature: ", <?php echo json_encode($temp_data); ?>);
+    console.log("PHP Data for Timestamps: ", <?php echo json_encode($timestamps); ?>);
+
     // Refresh page every 30 seconds
     setTimeout(() => { location.reload(); }, 30000);
 
@@ -91,20 +94,44 @@ $conn->close();
             datasets: [{
                 label: 'CPU Temperature (°C)',
                 data: <?php echo json_encode($temp_data); ?>,
-                borderColor: '#ff4757',
-                backgroundColor: 'rgba(255, 71, 87, 0.2)',
-                fill: true,
-                tension: 0.3
+                borderColor: '#1e90ff',  // Blue color for the line
+                backgroundColor: 'rgba(30, 144, 255, 0.2)',  // Light blue gradient fill
+                fill: true,  // Fill the area under the line
+                tension: 0.4,  // Smoother curve
+                borderWidth: 2,
+                pointBackgroundColor: '#1e90ff', // Blue points
+                pointRadius: 0,
+                pointHoverRadius: 8
             }]
         },
         options: {
             responsive: true,
             scales: {
-                x: { title: { display: true, text: 'Timestamp', color: '#fff' } },
-                y: { title: { display: true, text: 'Temperature (°C)', color: '#fff' } }
+                x: {
+                    title: { display: true, text: 'Timestamp', color: '#fff' },
+                    grid: { color: '#444' }
+                },
+                y: {
+                    title: { display: true, text: 'Temperature (°C)', color: '#fff' },
+                    grid: { color: '#444' },
+                    min: 26,  // Set the minimum value for y-axis
+                    max: 35   // Set the maximum value for y-axis
+                }
             },
             plugins: {
-                legend: { labels: { color: '#fff' } }
+                legend: {
+                    labels: { color: '#fff' }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(30, 144, 255, 0.8)',  // Tooltip background color
+                    bodyColor: '#fff',
+                    titleColor: '#fff',
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.dataset.label + ': ' + tooltipItem.raw + '°C';
+                        }
+                    }
+                }
             }
         }
     });
