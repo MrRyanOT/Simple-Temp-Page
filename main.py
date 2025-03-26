@@ -8,7 +8,7 @@ SSID = "((( Saturday )))"
 PASSWORD = "0004edb6700b6"
 
 # Database API endpoint (PHP or Node.js server)
-API_URL = "https://southsync.co.za/dashboard/raspberry.php"
+API_URL = "/raspberry.php"
 
 # Internal Temperature Sensor
 sensor_temp = machine.ADC(4)
