@@ -5,7 +5,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 function _fg_dbConnection() {
-    $conn = mysqli_connect("localhost", "talxcoza_raspberry", "T5NU3HcePm7Xg5dkRmgn", "talxcoza_raspberry");
+    $conn = mysqli_connect("", "", "", "");
     return $conn;
 }
 
